@@ -13,5 +13,15 @@ JWT_ALGORITHM = env.str("ALGORITHM", default="HS256")
 
 class DecodeToken(TokenCoder):
     def decode(self, token: str) -> dict:
+        print(f"Врмемя сейчас {time.time()}")
         decoded_token = jwt.decode(token, JWT_SECRET, algorithms=JWT_ALGORITHM)
-        return decoded_token
+        print(f"Врмемя когда истекает токен {decoded_token['expires']}")
+        if time.time() > decoded_token["expires"]:
+            return False
+        else:
+            return True
+
+
+
+#Tue, 29 Oct 2024 14:54:59 GMT
+# Tue, 29 Oct 2024 14:33:49 GMT

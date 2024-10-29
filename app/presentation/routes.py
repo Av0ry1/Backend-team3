@@ -11,7 +11,8 @@ from app.presentation.v1 import (
     favourite,
     search,
     user,
-    cart
+    cart,
+    pwd,
 )
 
 router = APIRouter(prefix="/api")
@@ -46,4 +47,4 @@ router.include_router(
 )
 router.include_router(favourite.router, prefix="/favourites", tags=["favourites"])
 router.include_router(chat.router, prefix="/chat", tags=["chat"])
-
+router.include_router(pwd.router, prefix="/pwd", tags=["pwd"])

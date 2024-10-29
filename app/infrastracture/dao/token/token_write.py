@@ -37,3 +37,4 @@ class TokenWriteDaoImpl(BaseDao, TokenWrite):
 
     def delete_by_user_id(self, token: AccessTokenUserIdDto) -> None:
         self._database["token"].find_one_and_delete({"user_id": token.user_id})
+        print("токен удалён")

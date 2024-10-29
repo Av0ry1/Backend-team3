@@ -8,6 +8,10 @@ from app.core.picture.usecases.delete_picture_by_user_id import (
     DeletePictureByUserIDUseCase,
 )
 from app.core.token.usecases.get_access_token_by_jwt import GetAccessTokenByJwtUseCase
+from app.core.token.usecases.delete_token_by_user_id import DeleteTokenByUserIdUseCase
+from app.core.token.usecases.create_token import CreateTokenUseCase
+from app.core.token.dto.token import AccessTokenUserIdDto
+
 from app.core.user.dto.user import (
     UserId,
     UserSignIn,
@@ -33,6 +37,8 @@ from app.presentation.di import (
     provide_sign_in_stub,
     provide_sign_up_stub,
     provide_update_user_stub,
+    provide_delete_token_by_user_id_stub,
+    provide_create_token_stub,
 )
 
 router = APIRouter()
@@ -73,10 +79,20 @@ async def sign_up(
 
 @router.post(path="/sign_in")
 async def sign_in(
-    user: UserSignIn, sign_in_use_case: SignInUseCase = Depends(provide_sign_in_stub)
+    user: UserSignIn, sign_in_use_case: SignInUseCase = Depends(provide_sign_in_stub),
+    delete_token: DeleteTokenByUserIdUseCase = Depends(provide_delete_token_by_user_id_stub),
+    create_new_token: CreateTokenUseCase = Depends(provide_create_token_stub),
 ):
     try:
         access_token = sign_in_use_case.execute(user=user)
+        jwtbearer = JWTBearer.verify_jwt(access_token.jwt_token)
+
+        if jwtbearer == False:
+            print(access_token)
+            delete_token.execute(AccessTokenUserIdDto(user_id=access_token.user_id))
+            access_token = create_new_token.execute(AccessTokenUserIdDto(user_id=access_token.user_id))
+
+
     except AuthError as e:
         return JSONResponse(content={"message": str(e)}, status_code=422)
     return {"user_id": access_token.user_id, "jwt_token": access_token.jwt_token}
@@ -90,6 +106,7 @@ async def get_self_user_info(
         provide_get_access_token_by_jwt_stub
     ),
 ):
+
     user_id = get_access_token_by_jwt_use_case.execute(jwt).user_id
     try:
         user = get_user_by_id_use_case.execute(UserId(id=user_id))

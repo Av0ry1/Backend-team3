@@ -6,6 +6,7 @@ from app.infrastracture.dao.base import BaseDao
 class TokenReadDaoImpl(BaseDao, TokenRead):
     def get_by_user_id(self, user_id: str) -> AccessToken:
         access_token = self._database["token"].find_one({"user_id": user_id})
+
         if not access_token:
             raise TypeError
         return AccessToken(
