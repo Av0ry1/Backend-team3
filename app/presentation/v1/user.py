@@ -50,7 +50,7 @@ async def sign_up(
     raw_password: str = Form(),
     full_name: str = Form(),
     date_of_birth: str = Form(),
-    picture: UploadFile = File(...),
+    picture: Optional[UploadFile] = File(None),
     telegram_id: Optional[int] = Form(None),
     telegram_username: Optional[str] = Form(None),
     sign_up_use_case: SignUpUseCase = Depends(provide_sign_up_stub),
@@ -65,13 +65,14 @@ async def sign_up(
                 raw_password=raw_password,
                 full_name=full_name,
                 date_of_birth=date_of_birth,
-                picture_id=create_picture_use_case.execute(
+                picture_id="67dc46ecbbf05a3cf3d668d9" if picture is None else create_picture_use_case.execute(
                     PictureCreate(file=picture)
                 ).id,
                 telegram_id=telegram_id,
                 telegram_username=telegram_username,
             )
         )
+        print(picture)
     except AuthError as e:
         return JSONResponse(content={"message": str(e)}, status_code=404)
     return {"chat_message": "user successfully created"}
