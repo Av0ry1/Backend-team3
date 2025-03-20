@@ -29,7 +29,7 @@ async def get(
     picture_id: str,
     get_picture_by_id: GetPictureByIdUseCase = Depends(provide_get_picture_stub),
 ):
-    return get_picture_by_id.execute(picture_id_obj=PictureId(id=picture_id))
+    return get_picture_by_id.execute(picture_id_obj=PictureId(id=picture_id)).picture
 
 
 @router.delete(path="/{picture_id}")
