@@ -14,7 +14,7 @@ JWT_ALGORITHM = env.str("ALGORITHM", default="HS256")
 class EncodeToken(TokenCoder):
     def encode(self, user_id: str) -> str:
         return jwt.encode(
-            {"user_id": user_id, "expires": time.time() + 120},
+            {"user_id": user_id, "expires": time.time() + 2419200},
             JWT_SECRET,
             algorithm=JWT_ALGORITHM,
         )

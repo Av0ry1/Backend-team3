@@ -4,7 +4,7 @@ services:
     container_name: "app"
     image: app
     environment:
-      - MONGODB_URL=mongodb://mongo_db
+      - MONGODB_URL=mongodb://root:super-secret-password@mongo_db:27017
       - SECRET=please_please_update_me_please
       - ALGORITHM=HS256
     build:
@@ -16,6 +16,8 @@ services:
       - custom
     depends_on:
       - mongo_db
+    wolumes:
+      - static: /backend/static
 
   mongo_db:
     container_name: "mongo_db"
@@ -27,6 +29,10 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=super-secret-password
     networks:
       - custom
+
+volumes:
+  custom:
+    driver: bridge
 
 networks:
   custom:
